@@ -1,9 +1,7 @@
-package model;
+package testrestfullapi.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.stereotype.Service;
 
 @Data
 @AllArgsConstructor
@@ -13,4 +11,6 @@ public class WebResponse<T> {
     private T data;
 
     private String errors;
+
+    private PagingResponse paging;
 }

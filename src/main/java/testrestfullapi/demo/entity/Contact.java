@@ -1,14 +1,9 @@
-package entity;
-
+package testrestfullapi.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
-
 
 @Getter
 @Setter
@@ -32,10 +27,14 @@ public class Contact {
     private String email;
 
     @ManyToOne
-    @JoinColumn(name ="username", referencedColumnName = "userName")
+    @JoinColumn(name = "username", referencedColumnName = "username")
     private User user;
 
     @OneToMany(mappedBy = "contact")
     private List<Address> addresses;
+
+
+
+
 
 }

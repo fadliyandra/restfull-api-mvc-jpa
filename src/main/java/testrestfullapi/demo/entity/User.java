@@ -1,22 +1,19 @@
-package entity;
+package testrestfullapi.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-
 public class User {
-
     @Id
     private String username;
 
@@ -31,4 +28,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Contact> contacts;
+
+
 }
