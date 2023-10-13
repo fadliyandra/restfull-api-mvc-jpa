@@ -8,9 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import testrestfullapi.demo.entity.User;
 import testrestfullapi.demo.model.RegisterUserRequest;
+import testrestfullapi.demo.model.UpdateUserRequest;
 import testrestfullapi.demo.model.UserResponse;
 import testrestfullapi.demo.repository.UserRepository;
 import testrestfullapi.demo.security.BCrypt;
+
+import java.util.Objects;
 
 
 @Service
@@ -44,6 +47,29 @@ public class UserService {
                 .username(user.getUsername())
                 .name(user.getName())
                 .build();
+    }
+
+    public UserResponse update(User user, UpdateUserRequest request){
+        validationService.validate(request);
+
+        log.info("REQUEST : {}", request);
+
+        if (Objects.nonNull(request.getName())){
+            user.setName(request.getName());
+        }
+        if(Objects.nonNull(request.getName())){
+            user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+        }
+
+        userRepository.save(user);
+
+        log.info("User : {}", user.getName());
+
+        return UserResponse.builder()
+                .name(user.getName())
+                .username(user.getUsername())
+                .build();
+
     }
 
 
