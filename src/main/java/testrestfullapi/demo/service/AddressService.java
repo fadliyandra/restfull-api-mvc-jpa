@@ -11,9 +11,11 @@ import testrestfullapi.demo.entity.Contact;
 import testrestfullapi.demo.entity.User;
 import testrestfullapi.demo.model.AddressRequest;
 import testrestfullapi.demo.model.AddressResponse;
+import testrestfullapi.demo.model.UpdateAddressRequest;
 import testrestfullapi.demo.repository.AddressRepository;
 import testrestfullapi.demo.repository.ContactRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -58,6 +60,57 @@ public class AddressService {
                 .postalCode(address.getPostalCode())
                 .build();
     }
+
+    public AddressResponse update(User user, UpdateAddressRequest request){
+        validationService.validate(request);
+
+        Contact contact = contactRepository.findFirstByUserAndId(user, request.getContactId())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Contact is not found"));
+
+        Address address = addressRepository.findFirstByContactAndId(contact, request.getContactId())
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "address is not found"));
+
+        address.setStreet(request.getStreet());
+        address.setCity(request.getCity());
+        address.setProvince(request.getProvince());
+        address.setCountry(request.getCountry());
+        address.setPostalCode(request.getPostalCode());
+        addressRepository.save(address);
+
+        return toAddressResponse(address);
+    }
+    @Transactional(readOnly = true)
+    public AddressResponse get(User user, String contactId, String addressId){
+        Contact contact = contactRepository.findFirstByUserAndId(user, contactId)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "contact is not found"));
+
+        Address address = addressRepository.findFirstByContactAndId(contact, addressId)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "addres is not found"));
+        return toAddressResponse(address);
+    }
+
+    @Transactional
+    public void remove(User user, String contactId, String addressId){
+    Contact contact = contactRepository.findFirstByUserAndId(user, contactId)
+            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "contact is not found"));
+
+    Address address = addressRepository.findFirstByContactAndId(contact, addressId)
+            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "addres is not found"));
+
+    addressRepository.delete(address);
+
+}
+    @Transactional(readOnly = true)
+    public List<AddressResponse> list(User user, String contactId){
+        Contact contact = contactRepository.findFirstByUserAndId(user, contactId)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "contact is not found"));
+
+        List<Address> addresses = addressRepository.findFirstByContact(contact);
+        return addresses.stream().map(this::toAddressResponse).toList();
+    }
+
+
+
 
 
 
